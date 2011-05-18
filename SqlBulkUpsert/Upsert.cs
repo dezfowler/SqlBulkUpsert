@@ -21,6 +21,7 @@ namespace SqlBulkUpsert
 			if (targetTableSchema == null) throw new ArgumentNullException("targetTableSchema");
 			if (tempTableSchema == null) throw new ArgumentNullException("tempTableSchema");
 			if (columnNames == null) throw new ArgumentNullException("columnNames");
+
 			_connection = connection;
 			_targetTableSchema = targetTableSchema;
 			_tempTableSchema = tempTableSchema;
@@ -34,7 +35,7 @@ namespace SqlBulkUpsert
 
 		private void CreateTempTable()
 		{
-			string createTempTableSql = _tempTableSchema.ToCreateTableCommandText();
+			string createTempTableSql = _tempTableSchema.ToCreateTableCommandText(_targetTableSchema);
 			_connection.ExecuteCommands(createTempTableSql);
 		}
 

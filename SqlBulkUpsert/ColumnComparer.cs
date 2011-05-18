@@ -13,7 +13,7 @@ namespace SqlBulkUpsert
 
 		public override bool Equals(Column x, Column y)
 		{
-			if (null == x) throw new ArgumentNullException("x");
+            if (null == x) return false;
 			return x.Equals(y);
 		}
 

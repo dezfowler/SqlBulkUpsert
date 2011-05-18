@@ -26,7 +26,7 @@ namespace SqlBulkUpsert
 			}
 		}
 
-		private static SqlTableSchema GetTempTableSchema(SqlTableSchema targetTableSchema, ICollection<string> columnNames)
+	    private static SqlTableSchema GetTempTableSchema(SqlTableSchema targetTableSchema, ICollection<string> columnNames)
 		{
 			// only columns we're inserting
 			var tempTableColumnList = targetTableSchema.Columns

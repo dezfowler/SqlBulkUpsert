@@ -383,6 +383,38 @@ namespace SqlBulkUpsert.Test
 	 public void CheckCreateTableCommand()
 	 {
 		 // Arrange
+         var existingSchema = new SqlTableSchema("ExistingTable", new List<Column>
+													   {
+														   new NumericColumn
+														   {
+															   Name = "first",
+															   DataType = "int",
+															   OrdinalPosition = 1,
+															   Nullable = false,
+														   },
+														   new TextColumn
+														   {
+															   Name = "second",
+															   DataType = "ntext",
+															   OrdinalPosition = 2,
+															   Nullable = true,
+														   },
+                                                           new DateColumn
+														   {
+															   Name = "third",
+															   DataType = "datetime2",
+															   OrdinalPosition = 3,
+															   Precision = 4,
+														   },
+                                                            new TextColumn
+														   {
+															   Name = "fourth",
+															   DataType = "varchar(max)",
+															   OrdinalPosition = 4,
+															   Nullable = true,
+														   }
+													   });
+
 		 var schema = new SqlTableSchema("TestUpsert", new List<Column>
 													   {
 														   new NumericColumn
@@ -405,14 +437,21 @@ namespace SqlBulkUpsert.Test
 															   DataType = "datetime2",
 															   OrdinalPosition = 3,
 															   Precision = 4,
+														   },
+                                                           new IdentityColumn
+														   {
+															   Name = "sequence",
+															   DataType = "int",
+															   OrdinalPosition = 4
 														   }
 													   });
-
+         
 		 // Act
-		 var cmdText = schema.ToCreateTableCommandText();
+         var cmdText = schema.ToCreateTableCommandText(existingSchema);
 
 		 // Assert
-		 Assert.AreEqual("CREATE TABLE [TestUpsert] ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL)", cmdText);
+         Assert.AreEqual("SELECT [first], [second], [third] into [TestUpsert] from [ExistingTable] where 1 = 2; ALTER TABLE [TestUpsert] ADD [sequence] int NOT NULL IDENTITY(0, 1);", cmdText);
+		 //Assert.AreEqual("CREATE TABLE [TestUpsert] ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL)", cmdText);
 	 }
 
 	 [Test]
