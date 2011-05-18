@@ -17,15 +17,21 @@ ELSE
 	exec('
 	BEGIN TRAN
 		INSERT INTO [{0}] ({4})
+		OUTPUT $action [action], INSERTED.$IDENTITY [ident], [source].[_Surrogate] INTO @inserts
 		SELECT {4}
 		FROM [{1}] source
 		WHERE NOT EXISTS(SELECT * FROM [{0}] target WHERE {2})
 		
 		UPDATE [{0}]
+		OUTPUT $action [action], INSERTED.$IDENTITY [ident], [source].[_Surrogate] INTO @updates
 		SET {3}
 		FROM [{0}] target
 		JOIN [{1}] source
 		WHERE {2}
+
+		select * from @inserts
+		union all
+		select * from @updates
 	COMMIT TRAN
 	')
   END
