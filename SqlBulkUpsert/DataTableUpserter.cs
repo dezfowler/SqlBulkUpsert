@@ -12,7 +12,9 @@ namespace SqlBulkUpsert
 	/// </summary>
 	public class DataTableUpserter : UpserterBase
 	{
-		public DataTableUpserter(SqlTableSchema targetTableSchema) : base(targetTableSchema) { }
+		public DataTableUpserter(SqlTableSchema targetTableSchema) : base(targetTableSchema)
+		{
+		}
 
 		/// <summary>
 		/// Update supplied DataTable with identity values of inserted records
@@ -52,7 +54,8 @@ namespace SqlBulkUpsert
 			// Ensure all columns in DataTable are in actual table schema
 			foreach (DataColumn dataColumn in dataTable.Columns)
 			{
-				if (!targetTableSchema.Columns.Any(c => c.Name == dataColumn.ColumnName)) 
+				var column = dataColumn; //// copying the value to remove access to a modified closure
+				if (!targetTableSchema.Columns.Any(c => c.Name == column.ColumnName)) 
 					throw new SqlBulkUpsertException(String.Format(CultureInfo.CurrentCulture, "Column {0} does not appear in table {1}", dataColumn.ColumnName, dataTable.TableName));
 			}
 

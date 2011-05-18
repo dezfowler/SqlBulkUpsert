@@ -7,7 +7,9 @@ namespace SqlBulkUpsert
 	public class NumericColumn : Column
 	{
 		public int? Precision { get; set; }
+
 		public int? Radix { get; set; }
+		
 		public int? Scale { get; set; }
 
 		public override Column Clone()
@@ -54,6 +56,7 @@ namespace SqlBulkUpsert
 				case "real":
 					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Radix);
 			}
+
 			return base.ToFullDataTypeString();
 		}
 	}

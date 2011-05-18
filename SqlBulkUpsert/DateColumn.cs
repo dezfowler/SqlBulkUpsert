@@ -43,6 +43,7 @@ namespace SqlBulkUpsert
 				case "datetime2":
 					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Precision);
 			}
+
 			return base.ToFullDataTypeString();
 		}
 	}

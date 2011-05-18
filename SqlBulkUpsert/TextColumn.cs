@@ -7,6 +7,7 @@ namespace SqlBulkUpsert
 	public class TextColumn : Column
 	{
 		public int? CharLength { get; set; }
+
 		public int? ByteLength { get; set; }
 
 		public override bool Equals(Column other)

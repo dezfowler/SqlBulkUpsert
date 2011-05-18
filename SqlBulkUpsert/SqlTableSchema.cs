@@ -114,27 +114,29 @@ namespace SqlBulkUpsert
 
 		public string ToCreateTableCommandText(SqlTableSchema targetSchema)
 		{
-		    var missingColumns = GetMissingColumns(targetSchema);
-            
-		    var createTableCommand = String.Format(
-                CultureInfo.InvariantCulture,
-                "SELECT {0} into [{1}] from [{2}] where 1 = 2; ",
-                Columns.Intersect(targetSchema.Columns, new ColumnComparer()).ToSelectListString(),
-                TableName,
-                targetSchema.TableName);
+			if (null == targetSchema) throw new ArgumentNullException("targetSchema");
 
-            if (null != missingColumns)
-                createTableCommand += string.Format("ALTER TABLE [{0}] ADD {1};", TableName, missingColumns.ToColumnDefinitionListString());
+			var missingColumns = GetMissingColumns(targetSchema);
+			
+			var createTableCommand = String.Format(
+				CultureInfo.InvariantCulture,
+				"SELECT {0} into [{1}] from [{2}] where 1 = 2; ",
+				Columns.Intersect(targetSchema.Columns, new ColumnComparer()).ToSelectListString(),
+				TableName,
+				targetSchema.TableName);
 
-		    return createTableCommand;
+			if (null != missingColumns)
+				createTableCommand += string.Format("ALTER TABLE [{0}] ADD {1};", TableName, missingColumns.ToColumnDefinitionListString());
+
+			return createTableCommand;
 		}
 
-        private IEnumerable<Column> GetMissingColumns(SqlTableSchema targetSchema)
-        {
-            return Columns.Except(targetSchema.Columns, new ColumnComparer());
-        }
+		private IEnumerable<Column> GetMissingColumns(SqlTableSchema targetSchema)
+		{
+			return Columns.Except(targetSchema.Columns, new ColumnComparer());
+		}
 
-	    public string ToDropTableCommandText()
+		public string ToDropTableCommandText()
 		{
 			return String.Format(CultureInfo.InvariantCulture, "DROP TABLE [{0}]", TableName);
 		}

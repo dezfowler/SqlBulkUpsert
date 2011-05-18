@@ -16,7 +16,7 @@ namespace SqlBulkUpsert
 
 		public override string ToColumnDefinitionString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "{0}{1}", base.ToColumnDefinitionString(), " IDENTITY(0, 1)" );
+			return String.Format(CultureInfo.InvariantCulture, "{0}{1}", base.ToColumnDefinitionString(), " IDENTITY(0, 1)");
 		}
 	}
 }

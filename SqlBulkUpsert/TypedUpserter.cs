@@ -9,16 +9,17 @@ namespace SqlBulkUpsert
 	/// <summary>
 	/// Upserts to a target table from an enumerable of <typeparamref name="T"/>.
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="T">Type of the data to upsert</typeparam>
 	public class TypedUpserter<T> : UpserterBase
 	{
 		private readonly Dictionary<string, Func<T, object>> _columnMappings;
 		private readonly Action<T, int> _identUpdater;
 
-		public TypedUpserter(SqlTableSchema targetTableSchema, Dictionary<string, Func<T, object>> columnMappings, Action<T,int> identUpdater)
+		public TypedUpserter(SqlTableSchema targetTableSchema, Dictionary<string, Func<T, object>> columnMappings, Action<T, int> identUpdater)
 			: base(targetTableSchema)
 		{
 			if (columnMappings == null) throw new ArgumentNullException("columnMappings");
+
 			_columnMappings = columnMappings;
 			_identUpdater = identUpdater;
 		}
@@ -32,7 +33,7 @@ namespace SqlBulkUpsert
 				inserts = PerformUpsert(connection, _columnMappings.Keys, typedReader);
 			}
 
-			if(_identUpdater != null)
+			if (_identUpdater != null)
 			{
 				foreach (var insert in inserts)
 				{
@@ -42,7 +43,7 @@ namespace SqlBulkUpsert
 			}
 		}
 
-		class TypedDataReader : IDataReader
+		private class TypedDataReader : IDataReader
 		{
 			private readonly IEnumerator<T> _items;
 			private readonly Dictionary<string, int> _mappingLookup;
@@ -62,9 +63,13 @@ namespace SqlBulkUpsert
 				_mappingFuncs = columnMappings.Values.ToArray();
 			}
 
+			public int FieldCount
+			{
+				get { return _mappingFuncs.Length; }
+			}
+
 			public void Dispose()
 			{
-
 			}
 
 			public object GetValue(int i)
@@ -75,11 +80,6 @@ namespace SqlBulkUpsert
 			public int GetOrdinal(string name)
 			{
 				return _mappingLookup[name];
-			}
-
-			public int FieldCount
-			{
-				get { return _mappingFuncs.Length; }
 			}
 
 			public bool Read()
@@ -230,5 +230,4 @@ namespace SqlBulkUpsert
 			#endregion
 		}
 	}
-	
 }

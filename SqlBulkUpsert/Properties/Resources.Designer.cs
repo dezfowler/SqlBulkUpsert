@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Resources;
-
 namespace SqlBulkUpsert.Properties {
 	using System;
 	
@@ -87,16 +85,25 @@ namespace SqlBulkUpsert.Properties {
 		
 		/// <summary>
 		///   Looks up a localized string similar to 
-		///MERGE INTO {0} AS target
-		///USING {1} AS source
-		///ON {2}
-		///WHEN MATCHED THEN
-		///	UPDATE SET {3}
-		///WHEN NOT MATCHED BY TARGET THEN
-		///	INSERT ({4}) 
-		///	VALUES ({4})
-		///OUTPUT $action [action], INSERTED.$IDENTITY [ident], [source].[_Surrogate];
-		///.
+		///IF (@@microsoftversion / 0x01000000) &gt; 9 
+		///  BEGIN
+		///	exec (&apos;
+		///	MERGE INTO [{0}] AS target
+		///	USING [{1}] AS source
+		///	ON {2}
+		///	WHEN MATCHED THEN
+		///		UPDATE SET {3}
+		///	WHEN NOT MATCHED BY TARGET THEN
+		///		INSERT ({4}) 
+		///		VALUES ({4})
+		///	OUTPUT $action [action], INSERTED.$IDENTITY [ident], [source].[_Surrogate];&apos;)
+		///  END
+		///ELSE
+		///  BEGIN
+		///	exec(&apos;
+		///	BEGIN TRAN
+		///		INSERT INTO [{0}] ({4})
+		///		OUTPUT $action [action], INSERTED.$IDENTITY [ident], [source].[_Surroga [rest of string was truncated]&quot;;.
 		/// </summary>
 		internal static string MergeStatement {
 			get {

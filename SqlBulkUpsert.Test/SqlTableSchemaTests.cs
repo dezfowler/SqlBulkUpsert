@@ -9,7 +9,6 @@ namespace SqlBulkUpsert.Test
  public class SqlTableSchemaTests : DatabaseTestsBase
  {
 	 [Test]
-	 [ExpectedException(ExpectedMessage = "Table not found")]
 	 public void RetrieveTableSchemaNotExist()
 	 {
 		 using (var connection = DatabaseHelper.CreateAndOpenConnection())
@@ -17,8 +16,10 @@ namespace SqlBulkUpsert.Test
 			 // Arrange
 
 			 // Act
-			 SqlTableSchema.LoadFromDatabase(connection, "DoesNotExist", null);
-
+			 Assert.That(
+				 () => SqlTableSchema.LoadFromDatabase(connection, "DoesNotExist", null),
+						 Throws.Exception.TypeOf<SqlBulkUpsertException>().With.Message.EqualTo("Table not found"));
+			 
 			 // Assert
 		 }
 	 }
@@ -28,6 +29,7 @@ namespace SqlBulkUpsert.Test
 	 {
 		 // Arrange
 		 var columnDetail = new DataTable();
+		 #region columns
 		 columnDetail.Columns.AddRange(new List<DataColumn>
 									   {
 										   new DataColumn
@@ -87,6 +89,7 @@ namespace SqlBulkUpsert.Test
 											   AllowDBNull = true,
 										   },
 									   }.ToArray());
+		 #endregion
 
 		 columnDetail.Rows.Add("ident", 1, "NO", "int", DBNull.Value, DBNull.Value, (byte)10, (short)10, 0, DBNull.Value);
 		 columnDetail.Rows.Add("key_part_1", 2, "NO", "nchar", 4, 8, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
@@ -105,7 +108,7 @@ namespace SqlBulkUpsert.Test
 										new DataColumn
 										{
 											ColumnName = "COLUMN_NAME",
-											DataType = typeof (string),
+											DataType = typeof(string),
 										},
 									}.ToArray());
 
@@ -383,7 +386,7 @@ namespace SqlBulkUpsert.Test
 	 public void CheckCreateTableCommand()
 	 {
 		 // Arrange
-         var existingSchema = new SqlTableSchema("ExistingTable", new List<Column>
+		 var existingSchema = new SqlTableSchema("ExistingTable", new List<Column>
 													   {
 														   new NumericColumn
 														   {
@@ -399,14 +402,14 @@ namespace SqlBulkUpsert.Test
 															   OrdinalPosition = 2,
 															   Nullable = true,
 														   },
-                                                           new DateColumn
+														   new DateColumn
 														   {
 															   Name = "third",
 															   DataType = "datetime2",
 															   OrdinalPosition = 3,
 															   Precision = 4,
 														   },
-                                                            new TextColumn
+															new TextColumn
 														   {
 															   Name = "fourth",
 															   DataType = "varchar(max)",
@@ -438,19 +441,19 @@ namespace SqlBulkUpsert.Test
 															   OrdinalPosition = 3,
 															   Precision = 4,
 														   },
-                                                           new IdentityColumn
+														   new IdentityColumn
 														   {
 															   Name = "sequence",
 															   DataType = "int",
 															   OrdinalPosition = 4
 														   }
 													   });
-         
+		 
 		 // Act
-         var cmdText = schema.ToCreateTableCommandText(existingSchema);
+		 var cmdText = schema.ToCreateTableCommandText(existingSchema);
 
 		 // Assert
-         Assert.AreEqual("SELECT [first], [second], [third] into [TestUpsert] from [ExistingTable] where 1 = 2; ALTER TABLE [TestUpsert] ADD [sequence] int NOT NULL IDENTITY(0, 1);", cmdText);
+		 Assert.AreEqual("SELECT [first], [second], [third] into [TestUpsert] from [ExistingTable] where 1 = 2; ALTER TABLE [TestUpsert] ADD [sequence] int NOT NULL IDENTITY(0, 1);", cmdText);
 		 //Assert.AreEqual("CREATE TABLE [TestUpsert] ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL)", cmdText);
 	 }
 

@@ -32,7 +32,7 @@ namespace SqlBulkUpsert.Test
 
 		public static object ExecuteScalar(this SqlConnection connection, string sqlCommandText)
 		{
-			using(var cmd = new SqlCommand(sqlCommandText, connection))
+			using (var cmd = new SqlCommand(sqlCommandText, connection))
 			{
 				return cmd.ExecuteScalar();
 			}

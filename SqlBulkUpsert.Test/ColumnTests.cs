@@ -6,7 +6,7 @@ namespace SqlBulkUpsert.Test
 	[TestFixture]
 	public class ColumnTests
 	{
-		private readonly Dictionary<Column, string> columnDefn = new Dictionary<Column, string>
+		private readonly Dictionary<Column, string> columnDefinition = new Dictionary<Column, string>
 						   {
 										{
 								   new IdentityColumn(), 
@@ -128,12 +128,10 @@ namespace SqlBulkUpsert.Test
 		[Test]
 		public void CheckGeneratedColumnDefinitionString()
 		{
-			foreach (var kvp in columnDefn)
+			foreach (var kvp in columnDefinition)
 			{
 				Assert.AreEqual(kvp.Value, kvp.Key.ToColumnDefinitionString());
 			}
 		}
-
-		
 	}
 }

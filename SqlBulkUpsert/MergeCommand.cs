@@ -18,7 +18,6 @@ namespace SqlBulkUpsert
 			_targetTableSchema = targetTableSchema;
 		}
 
-
 		public override string ToString()
 		{
 			return String.Format(
@@ -28,10 +27,9 @@ namespace SqlBulkUpsert
 				_sourceTableSchema.TableName,
 				GetJoinCriteriaString(),
 				GetSetString(),
-				GetValuesList()
-				);
-
+				GetValuesList());
 		}
+
 		private string GetJoinCriteriaString()
 		{
 			return _targetTableSchema.PrimaryKeyColumns
@@ -61,6 +59,5 @@ namespace SqlBulkUpsert
 				.Where(c => c.CanBeInserted)
 				.ToSelectListString();
 		}
-
 	}
 }
