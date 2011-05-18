@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
 namespace SqlBulkUpsert
 {
@@ -40,7 +41,7 @@ namespace SqlBulkUpsert
 			{
 				case "datetimeoffset":
 				case "datetime2":
-					return String.Format("{0}({1})", DataType, Precision);
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Precision);
 			}
 			return base.ToFullDataTypeString();
 		}

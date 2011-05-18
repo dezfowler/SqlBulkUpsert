@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SqlBulkUpsert
@@ -12,6 +13,7 @@ namespace SqlBulkUpsert
 
         public override bool Equals(Column x, Column y)
         {
+            if (null == x) throw new ArgumentNullException("x");
             return x.Equals(y);
         }
 

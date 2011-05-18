@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using SqlBulkUpsert.Properties;
 
@@ -21,7 +22,8 @@ namespace SqlBulkUpsert
 		public override string ToString()
 		{
 			return String.Format(
-				Resources.MergeStatement,
+				CultureInfo.InvariantCulture,
+                Resources.MergeStatement,
 				_targetTableSchema.TableName,
 				_sourceTableSchema.TableName,
 				GetJoinCriteriaString(),
@@ -33,7 +35,7 @@ namespace SqlBulkUpsert
 		private string GetJoinCriteriaString()
 		{
 			return _targetTableSchema.PrimaryKeyColumns
-				.Select(c => String.Format("target.{0} = source.{0}", c.ToSelectListString()))
+				.Select(c => String.Format(CultureInfo.InvariantCulture, "target.{0} = source.{0}", c.ToSelectListString()))
 				.ToArray()
 				.Convert(a => String.Join(" AND ", a));
 		}
@@ -47,7 +49,7 @@ namespace SqlBulkUpsert
 				.ToList();
 
 			return columnsToBeSet
-				.Select(c => String.Format("{0} = source.{0}", c.ToSelectListString()))
+				.Select(c => String.Format(CultureInfo.InvariantCulture, "{0} = source.{0}", c.ToSelectListString()))
 				.ToArray()
 				.Convert(a => String.Join(", ", a));
 		}

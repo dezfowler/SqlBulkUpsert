@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
 namespace SqlBulkUpsert
 {
@@ -48,10 +49,10 @@ namespace SqlBulkUpsert
 			{
 				case "numeric":
 				case "decimal":
-					return String.Format("{0}({1}, {2})", DataType, Precision, Scale);
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1}, {2})", DataType, Precision, Scale);
 				case "float":
 				case "real":
-					return String.Format("{0}({1})", DataType, Radix);
+                    return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Radix);
 			}
 			return base.ToFullDataTypeString();
 		}

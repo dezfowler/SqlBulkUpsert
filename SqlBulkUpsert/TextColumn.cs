@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
 namespace SqlBulkUpsert
 {
@@ -39,11 +40,11 @@ namespace SqlBulkUpsert
 				case "varchar":
 				case "nchar":
 				case "nvarchar":
-					return String.Format("{0}({1})", DataType, HandleMax(CharLength));
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, HandleMax(CharLength));
 
 				case "binary":
 				case "varbinary":
-					return String.Format("{0}({1})", DataType, HandleMax(ByteLength));
+                    return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, HandleMax(ByteLength));
 
 				default:
 					return base.ToFullDataTypeString();
@@ -52,9 +53,9 @@ namespace SqlBulkUpsert
 
 		private static string HandleMax(int? val)
 		{
-			if (!val.HasValue) throw new Exception("Expected column length");
+			if (!val.HasValue) throw new ArgumentException("Expected column length");
 			var value = val.Value;
-			return value == -1 ? "max" : value.ToString();
+			return value == -1 ? "max" : value.ToString(CultureInfo.InvariantCulture);
 		}
 
 		protected override void Populate(IDataReader sqlDataReader)

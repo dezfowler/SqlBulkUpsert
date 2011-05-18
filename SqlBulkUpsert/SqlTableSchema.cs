@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using SqlBulkUpsert.Properties;
 
@@ -78,7 +79,7 @@ namespace SqlBulkUpsert
 				{
 					if (!sqlDataReader.Read())
 					{
-						throw new Exception("Table not found");
+						throw new SqlBulkUpsertException("Table not found");
 					}
 
 					sqlDataReader.NextResult();
@@ -112,12 +113,12 @@ namespace SqlBulkUpsert
 
 		public string ToCreateTableCommandText()
 		{
-			return String.Format("CREATE TABLE {0} ({1})", TableName, Columns.ToColumnDefinitionListString());
+			return String.Format(CultureInfo.InvariantCulture, "CREATE TABLE [{0}] ({1})", TableName, Columns.ToColumnDefinitionListString());
 		}
 
 		public string ToDropTableCommandText()
 		{
-			return String.Format("DROP TABLE {0}", TableName);
+			return String.Format(CultureInfo.InvariantCulture, "DROP TABLE [{0}]", TableName);
 		}
 	}
 }

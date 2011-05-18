@@ -12,7 +12,10 @@ namespace SqlBulkUpsert
 		/// <param name="commands"></param>
 		public static void ExecuteCommands(this IDbConnection connection, string commands)
 		{    
-			using (var cmd = connection.CreateCommand())
+            if (null == connection) throw new ArgumentNullException("connection");
+            if (null == commands) throw new ArgumentNullException("commands");
+            
+            using (var cmd = connection.CreateCommand())
 			{
 				var commandStrings = commands.Split(new[] { "\r\nGO\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 

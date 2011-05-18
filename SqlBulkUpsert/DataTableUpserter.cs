@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 
 namespace SqlBulkUpsert
@@ -20,14 +21,20 @@ namespace SqlBulkUpsert
 
 		public IEnumerable<int> Upsert(SqlConnection connection, DataTable dataTable)
 		{
-			VerifyDataTable(dataTable, TargetTableSchema);
+            if (null == dataTable) throw new ArgumentNullException("dataTable");
+            if (null == connection) throw new ArgumentNullException("connection");
+
+            VerifyDataTable(dataTable, TargetTableSchema);
 
 			var columnNames = dataTable.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToList();
-			var dataTableReader = new DataTableReader(dataTable);
-			
-			Dictionary<int, int> inserts = PerformUpsert(connection, columnNames, dataTableReader);
 
-			// return keys / update data table
+            Dictionary<int, int> inserts;
+            using (var dataTableReader = new DataTableReader(dataTable))
+            {
+                inserts = PerformUpsert(connection, columnNames, dataTableReader);
+            }
+
+		    // return keys / update data table
 			if (RetrieveIdentity)
 			{
 				var identityColumnName = TargetTableSchema.IdentityColumn.Name;
@@ -40,16 +47,18 @@ namespace SqlBulkUpsert
 			return inserts.Values;
 		}
 
-		private void VerifyDataTable(DataTable dataTable, SqlTableSchema targetTableSchema)
+		private static void VerifyDataTable(DataTable dataTable, SqlTableSchema targetTableSchema)
 		{
 			// Ensure all columns in DataTable are in actual table schema
 			foreach (DataColumn dataColumn in dataTable.Columns)
 			{
-				if (!targetTableSchema.Columns.Any(c => c.Name == dataColumn.ColumnName)) throw new Exception(String.Format("Column does not appear in table {0}", dataColumn.ColumnName));
+				if (!targetTableSchema.Columns.Any(c => c.Name == dataColumn.ColumnName)) 
+                    throw new SqlBulkUpsertException(String.Format(CultureInfo.CurrentCulture, "Column {0} does not appear in table {1}", dataColumn.ColumnName, dataTable.TableName));
 			}
 
 			// ensure primary key columns present in data table
-			if (!targetTableSchema.PrimaryKeyColumns.All(c => dataTable.Columns.Contains(c.Name))) throw new Exception("Table primary key columns must feature in DataTable");
+            if (!targetTableSchema.PrimaryKeyColumns.All(c => dataTable.Columns.Contains(c.Name)))
+                throw new SqlBulkUpsertException("Table primary key columns must feature in the DataTable");
 		}
 	}
 }
