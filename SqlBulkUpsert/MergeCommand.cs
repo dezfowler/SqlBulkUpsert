@@ -23,7 +23,7 @@ namespace SqlBulkUpsert
 		{
 			return String.Format(
 				CultureInfo.InvariantCulture,
-                Resources.MergeStatement,
+				Resources.MergeStatement,
 				_targetTableSchema.TableName,
 				_sourceTableSchema.TableName,
 				GetJoinCriteriaString(),

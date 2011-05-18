@@ -65,12 +65,12 @@ namespace SqlBulkUpsert
 		public Column IdentityColumn { get; private set; }
 
 		public string TableName { get; private set; }
-      
+	  
 		public static SqlTableSchema LoadFromDatabase(SqlConnection connection, string tableName, string identityColumn)
 		{
 			if (connection == null) throw new ArgumentNullException("connection");
 			if (tableName == null) throw new ArgumentNullException("tableName");
-         
+		 
 			using (var sqlCommand = connection.CreateCommand())
 			{
 				sqlCommand.CommandText = Resources.GetTableInfo;

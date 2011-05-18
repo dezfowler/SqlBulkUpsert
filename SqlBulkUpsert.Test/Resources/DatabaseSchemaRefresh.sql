@@ -2,7 +2,7 @@
 USE [master]
 GO
 
-/****** Object:  Database [SqlBulkUpsertTestDb]    Script Date: 02/10/2011 22:47:12 ******/
+/****** Object:  Database [SqlBulkUpsertTestDb]	Script Date: 02/10/2011 22:47:12 ******/
 IF  EXISTS (SELECT name FROM sys.databases WHERE name = N'SqlBulkUpsertTestDb')
 DROP DATABASE [SqlBulkUpsertTestDb]
 GO
@@ -10,14 +10,14 @@ GO
 USE [master]
 GO
 
-/****** Object:  Database [SqlBulkUpsertTestDb]    Script Date: 02/10/2011 22:47:12 ******/
+/****** Object:  Database [SqlBulkUpsertTestDb]	Script Date: 02/10/2011 22:47:12 ******/
 CREATE DATABASE [SqlBulkUpsertTestDb]
 GO
 
 USE [SqlBulkUpsertTestDb]
 GO
 
-/****** Object:  Table [dbo].[TestUpsert]    Script Date: 02/10/2011 22:48:06 ******/
+/****** Object:  Table [dbo].[TestUpsert]	Script Date: 02/10/2011 22:48:06 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TestUpsert]') AND type in (N'U'))
 DROP TABLE [dbo].[TestUpsert]
 GO
@@ -25,7 +25,7 @@ GO
 USE [SqlBulkUpsertTestDb]
 GO
 
-/****** Object:  Table [dbo].[TestUpsert]    Script Date: 02/10/2011 22:48:06 ******/
+/****** Object:  Table [dbo].[TestUpsert]	Script Date: 02/10/2011 22:48:06 ******/
 SET ANSI_NULLS ON
 GO
 

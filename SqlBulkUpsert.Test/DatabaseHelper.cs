@@ -25,7 +25,7 @@ namespace SqlBulkUpsert.Test
 
 		public static SqlConnection CreateAndOpenConnection()
 		{
-            var sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["connectionString"].ConnectionString);
+			var sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["connectionString"].ConnectionString);
 			sqlConnection.Open();
 			return sqlConnection;
 		}

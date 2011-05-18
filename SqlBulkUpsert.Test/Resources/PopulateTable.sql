@@ -1,6 +1,6 @@
 USE [SqlBulkUpsertTestDb]
 GO
-/****** Object:  Table [dbo].[TestUpsert]    Script Date: 05/08/2011 02:35:07 ******/
+/****** Object:  Table [dbo].[TestUpsert]	Script Date: 05/08/2011 02:35:07 ******/
 SET IDENTITY_INSERT [dbo].[TestUpsert] ON
 INSERT [dbo].[TestUpsert] ([ident], [key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image], [nullable_xml]) VALUES (1, N'TEST', 1, N'some text here 1', 11, NULL, NULL, NULL, NULL, NULL)
 INSERT [dbo].[TestUpsert] ([ident], [key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image], [nullable_xml]) VALUES (2, N'TEST', 2, N'some text here 2', 22, NULL, NULL, NULL, NULL, NULL)

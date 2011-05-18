@@ -26,7 +26,7 @@ namespace SqlBulkUpsert
 
 		public virtual Column CopyTo(Column column)
 		{
-            if (null == column) throw new ArgumentNullException("column");
+			if (null == column) throw new ArgumentNullException("column");
 			column.Name = Name;
 			column.OrdinalPosition = OrdinalPosition;
 			column.Nullable = Nullable;
@@ -38,8 +38,8 @@ namespace SqlBulkUpsert
 
 		public virtual bool Equals(Column other)
 		{
-            if (null == other) return false;
-            return
+			if (null == other) return false;
+			return
 				 Name == other.Name &&
 				 OrdinalPosition == other.OrdinalPosition &&
 				 Nullable == other.Nullable &&
@@ -48,7 +48,7 @@ namespace SqlBulkUpsert
 
 		public string ToSelectListString()
 		{
-            return String.Format(CultureInfo.InvariantCulture, "[{0}]", Name);
+			return String.Format(CultureInfo.InvariantCulture, "[{0}]", Name);
 		}
 
 		public virtual string ToColumnDefinitionString()
@@ -63,7 +63,7 @@ namespace SqlBulkUpsert
 
 		public static Column CreateFromReader(IDataReader sqlDataReader)
 		{
-            if (null == sqlDataReader) throw new ArgumentNullException("sqlDataReader");
+			if (null == sqlDataReader) throw new ArgumentNullException("sqlDataReader");
 
 			var dataType = (string)sqlDataReader["DATA_TYPE"];
 			Column column;
@@ -112,7 +112,7 @@ namespace SqlBulkUpsert
 
 		protected virtual void Populate(IDataReader sqlDataReader)
 		{
-            if (null == sqlDataReader) throw new ArgumentNullException("sqlDataReader");
+			if (null == sqlDataReader) throw new ArgumentNullException("sqlDataReader");
 			Name = (string)sqlDataReader["COLUMN_NAME"];
 			OrdinalPosition = (int)sqlDataReader["ORDINAL_POSITION"];
 			Nullable = ((string)sqlDataReader["IS_NULLABLE"]) == "YES";

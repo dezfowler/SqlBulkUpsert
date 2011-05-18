@@ -26,13 +26,13 @@ namespace SqlBulkUpsert
 		public void Upsert(SqlConnection connection, IEnumerable<T> items)
 		{
 			var itemList = new List<T>(items);
-		    Dictionary<int, int> inserts;
-		    using (var typedReader = new TypedDataReader(_columnMappings, items))
-            {
-                inserts = PerformUpsert(connection, _columnMappings.Keys, typedReader);
-            }
+			Dictionary<int, int> inserts;
+			using (var typedReader = new TypedDataReader(_columnMappings, items))
+			{
+				inserts = PerformUpsert(connection, _columnMappings.Keys, typedReader);
+			}
 
-            if(_identUpdater != null)
+			if(_identUpdater != null)
 			{
 				foreach (var insert in inserts)
 				{

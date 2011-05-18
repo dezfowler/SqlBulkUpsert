@@ -8,9 +8,9 @@ namespace SqlBulkUpsert
 {
 	public class UpserterBase
 	{
-	    protected SqlTableSchema TargetTableSchema { get; private set; }
+		protected SqlTableSchema TargetTableSchema { get; private set; }
 
-	    protected UpserterBase(SqlTableSchema targetTableSchema)
+		protected UpserterBase(SqlTableSchema targetTableSchema)
 		{
 			if (targetTableSchema == null) throw new ArgumentNullException("targetTableSchema");
 			TargetTableSchema = targetTableSchema;

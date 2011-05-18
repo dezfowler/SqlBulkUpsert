@@ -44,7 +44,7 @@ namespace SqlBulkUpsert
 
 				case "binary":
 				case "varbinary":
-                    return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, HandleMax(ByteLength));
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, HandleMax(ByteLength));
 
 				default:
 					return base.ToFullDataTypeString();

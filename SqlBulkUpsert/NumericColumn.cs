@@ -52,7 +52,7 @@ namespace SqlBulkUpsert
 					return String.Format(CultureInfo.InvariantCulture, "{0}({1}, {2})", DataType, Precision, Scale);
 				case "float":
 				case "real":
-                    return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Radix);
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Radix);
 			}
 			return base.ToFullDataTypeString();
 		}
