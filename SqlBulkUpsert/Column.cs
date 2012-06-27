@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
 namespace SqlBulkUpsert
 {
@@ -12,10 +13,15 @@ namespace SqlBulkUpsert
 		}
 
 		public string Name { get; set; }
+		
 		public int OrdinalPosition { get; set; }
+		
 		public bool Nullable { get; set; }
+		
 		public string DataType { get; set; }
+		
 		public bool CanBeInserted { get; set; }
+		
 		public bool CanBeUpdated { get; set; }
 
 		public virtual Column Clone()
@@ -25,17 +31,22 @@ namespace SqlBulkUpsert
 
 		public virtual Column CopyTo(Column column)
 		{
+			if (null == column) throw new ArgumentNullException("column");
+
 			column.Name = Name;
 			column.OrdinalPosition = OrdinalPosition;
 			column.Nullable = Nullable;
 			column.DataType = DataType;
 			column.CanBeInserted = CanBeInserted;
 			column.CanBeUpdated = CanBeUpdated;
+
 			return column;
 		}
 
 		public virtual bool Equals(Column other)
 		{
+			if (null == other) return false;
+			
 			return
 				 Name == other.Name &&
 				 OrdinalPosition == other.OrdinalPosition &&
@@ -45,12 +56,12 @@ namespace SqlBulkUpsert
 
 		public string ToSelectListString()
 		{
-			return String.Format("[{0}]", Name);
+			return String.Format(CultureInfo.InvariantCulture, "[{0}]", Name);
 		}
 
 		public virtual string ToColumnDefinitionString()
 		{
-			return String.Format("{0} {1} {2}NULL", ToSelectListString(), ToFullDataTypeString(), Nullable ? "" : "NOT ");
+			return String.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", ToSelectListString(), ToFullDataTypeString(), Nullable ? "NULL" : "NOT NULL");
 		}
 
 		public virtual string ToFullDataTypeString()
@@ -60,6 +71,8 @@ namespace SqlBulkUpsert
 
 		public static Column CreateFromReader(IDataReader sqlDataReader)
 		{
+			if (null == sqlDataReader) throw new ArgumentNullException("sqlDataReader");
+
 			var dataType = (string)sqlDataReader["DATA_TYPE"];
 			Column column;
 			switch (dataType)
@@ -107,6 +120,8 @@ namespace SqlBulkUpsert
 
 		protected virtual void Populate(IDataReader sqlDataReader)
 		{
+			if (null == sqlDataReader) throw new ArgumentNullException("sqlDataReader");
+
 			Name = (string)sqlDataReader["COLUMN_NAME"];
 			OrdinalPosition = (int)sqlDataReader["ORDINAL_POSITION"];
 			Nullable = ((string)sqlDataReader["IS_NULLABLE"]) == "YES";

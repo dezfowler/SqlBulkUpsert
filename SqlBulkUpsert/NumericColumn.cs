@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
 namespace SqlBulkUpsert
 {
 	public class NumericColumn : Column
 	{
 		public int? Precision { get; set; }
+
 		public int? Radix { get; set; }
+		
 		public int? Scale { get; set; }
 
 		public override Column Clone()
@@ -48,11 +51,12 @@ namespace SqlBulkUpsert
 			{
 				case "numeric":
 				case "decimal":
-					return String.Format("{0}({1}, {2})", DataType, Precision, Scale);
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1}, {2})", DataType, Precision, Scale);
 				case "float":
 				case "real":
-					return String.Format("{0}({1})", DataType, Radix);
+					return String.Format(CultureInfo.InvariantCulture, "{0}({1})", DataType, Radix);
 			}
+
 			return base.ToFullDataTypeString();
 		}
 	}

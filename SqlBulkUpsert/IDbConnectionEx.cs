@@ -8,10 +8,13 @@ namespace SqlBulkUpsert
 		/// <summary>
 		/// Execute multiple non-query commands against a connection.
 		/// </summary>
-		/// <param name="connection"></param>
-		/// <param name="commands"></param>
+		/// <param name="connection">The database connection to execute the commands on.</param>
+		/// <param name="commands">The list of SQL Commands to execute.</param>
 		public static void ExecuteCommands(this IDbConnection connection, string commands)
-		{    
+		{	
+			if (null == connection) throw new ArgumentNullException("connection");
+			if (null == commands) throw new ArgumentNullException("commands");
+			
 			using (var cmd = connection.CreateCommand())
 			{
 				var commandStrings = commands.Split(new[] { "\r\nGO\r\n" }, StringSplitOptions.RemoveEmptyEntries);

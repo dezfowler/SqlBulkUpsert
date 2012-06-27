@@ -8,19 +8,20 @@ namespace SqlBulkUpsert
 	/// <summary>
 	/// A single upsert operation
 	/// </summary>
-	class Upsert : IDisposable
+	public class Upsert : IDisposable
 	{
-		private SqlConnection _connection;
 		private readonly SqlTableSchema _targetTableSchema;
 		private readonly SqlTableSchema _tempTableSchema;
 		private readonly ICollection<string> _columnNames;
-
+		private SqlConnection _connection;
+		
 		public Upsert(SqlConnection connection, SqlTableSchema targetTableSchema, SqlTableSchema tempTableSchema, ICollection<string> columnNames)
 		{
 			if (connection == null) throw new ArgumentNullException("connection");
 			if (targetTableSchema == null) throw new ArgumentNullException("targetTableSchema");
 			if (tempTableSchema == null) throw new ArgumentNullException("tempTableSchema");
 			if (columnNames == null) throw new ArgumentNullException("columnNames");
+
 			_connection = connection;
 			_targetTableSchema = targetTableSchema;
 			_tempTableSchema = tempTableSchema;
@@ -32,9 +33,18 @@ namespace SqlBulkUpsert
 			_connection = null;
 		}
 
+		public Dictionary<int, int> Execute(IDataReader dataReader)
+		{
+			CreateTempTable();
+			BulkLoadTempTable(dataReader);
+			var inserts = UpsertFromTempTable();
+			DropTempTable();
+			return inserts;
+		}
+
 		private void CreateTempTable()
 		{
-			string createTempTableSql = _tempTableSchema.ToCreateTableCommandText();
+			string createTempTableSql = _tempTableSchema.ToCreateTableCommandText(_targetTableSchema);
 			_connection.ExecuteCommands(createTempTableSql);
 		}
 
@@ -47,6 +57,7 @@ namespace SqlBulkUpsert
 				{
 					copy.ColumnMappings.Add(columnName, columnName);
 				}
+
 				copy.WriteToServer(dataTableReader);
 			}
 		}
@@ -75,22 +86,14 @@ namespace SqlBulkUpsert
 					}
 				}
 			}
+
 			return inserts;
 		}
 
 		private void DropTempTable()
 		{
-			string dropTempTableSql = _tempTableSchema.ToDropTableCommandText();
+			var dropTempTableSql = _tempTableSchema.ToDropTableCommandText();
 			_connection.ExecuteCommands(dropTempTableSql);
-		}
-
-		public Dictionary<int, int> Execute(IDataReader dataReader)
-		{
-			CreateTempTable();
-			BulkLoadTempTable(dataReader);
-			Dictionary<int, int> inserts = UpsertFromTempTable();
-			DropTempTable();
-			return inserts;
 		}
 	}
 }

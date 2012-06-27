@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using SqlBulkUpsert.Properties;
 
@@ -31,10 +32,11 @@ namespace SqlBulkUpsert
 			if (columns == null) throw new ArgumentNullException("columns");
 			if (primaryKeyColumns == null) throw new ArgumentNullException("primaryKeyColumns");
 			if (identityColumn == null) throw new ArgumentNullException("identityColumn");
+
 			_columns = columns.ToList();
 			_primaryKeyColumns = Check(primaryKeyColumns);
 			IdentityColumn = _columns.First(c => c.Name == identityColumn);
-			
+
 			foreach (var primaryKeyColumn in _primaryKeyColumns)
 			{
 				primaryKeyColumn.CanBeUpdated = false;
@@ -64,12 +66,12 @@ namespace SqlBulkUpsert
 		public Column IdentityColumn { get; private set; }
 
 		public string TableName { get; private set; }
-      
+
 		public static SqlTableSchema LoadFromDatabase(SqlConnection connection, string tableName, string identityColumn)
 		{
 			if (connection == null) throw new ArgumentNullException("connection");
 			if (tableName == null) throw new ArgumentNullException("tableName");
-         
+
 			using (var sqlCommand = connection.CreateCommand())
 			{
 				sqlCommand.CommandText = Resources.GetTableInfo;
@@ -78,7 +80,7 @@ namespace SqlBulkUpsert
 				{
 					if (!sqlDataReader.Read())
 					{
-						throw new Exception("Table not found");
+						throw new SqlBulkUpsertException("Table not found");
 					}
 
 					sqlDataReader.NextResult();
@@ -110,14 +112,33 @@ namespace SqlBulkUpsert
 			return new SqlTableSchema(tableName, columns, primaryKeyColumns, identityColumn);
 		}
 
-		public string ToCreateTableCommandText()
+		public string ToCreateTableCommandText(SqlTableSchema targetSchema)
 		{
-			return String.Format("CREATE TABLE {0} ({1})", TableName, Columns.ToColumnDefinitionListString());
+			if (null == targetSchema) throw new ArgumentNullException("targetSchema");
+
+			var missingColumns = GetMissingColumns(targetSchema);
+			
+			var createTableCommand = String.Format(
+				CultureInfo.InvariantCulture,
+				"SELECT {0} into [{1}] from [{2}] where 1 = 2; ",
+				Columns.Intersect(targetSchema.Columns, new ColumnComparer()).ToSelectListString(),
+				TableName,
+				targetSchema.TableName);
+
+			if (null != missingColumns)
+				createTableCommand += string.Format("ALTER TABLE [{0}] ADD {1};", TableName, missingColumns.ToColumnDefinitionListString());
+
+			return createTableCommand;
+		}
+
+		private IEnumerable<Column> GetMissingColumns(SqlTableSchema targetSchema)
+		{
+			return Columns.Except(targetSchema.Columns, new ColumnComparer());
 		}
 
 		public string ToDropTableCommandText()
 		{
-			return String.Format("DROP TABLE {0}", TableName);
+			return String.Format(CultureInfo.InvariantCulture, "DROP TABLE [{0}]", TableName);
 		}
 	}
 }

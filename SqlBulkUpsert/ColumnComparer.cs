@@ -3,21 +3,22 @@ using System.Collections.Generic;
 
 namespace SqlBulkUpsert
 {
-    public class ColumnComparer : EqualityComparer<Column>, IComparer
-    {
-        public int Compare(object x, object y)
-        {
-            return ((Column)x).Equals((Column)y) ? 0 : -1;
-        }
+	public class ColumnComparer : EqualityComparer<Column>, IComparer
+	{
+		public int Compare(object x, object y)
+		{
+			return ((Column)x).Equals((Column)y) ? 0 : -1;
+		}
 
-        public override bool Equals(Column x, Column y)
-        {
-            return x.Equals(y);
-        }
+		public override bool Equals(Column x, Column y)
+		{
+			if (null == x) return false;
+			return x.Equals(y);
+		}
 
-        public override int GetHashCode(Column obj)
-        {
-            return 0;
-        }
-    }
+		public override int GetHashCode(Column obj)
+		{
+			return 0;
+		}
+	}
 }
