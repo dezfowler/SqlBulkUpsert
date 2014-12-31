@@ -82,7 +82,7 @@ namespace SqlBulkUpsert
 				return _items.MoveNext();
 			}
 
-			#region Not implemented - satisfying interface only
+			#region Not used by SqlBulkCopy - satisfying interface only
 			public string GetName(int i)
 			{
 				throw new NotImplementedException();

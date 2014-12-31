@@ -12,6 +12,7 @@ namespace SqlBulkUpsert
 			CanBeInserted = false;
 			CanBeUpdated = false;
 		}
+
 		public override string ToColumnDefinitionString()
 		{
 			return String.Format("{0}{1}", base.ToColumnDefinitionString(), " IDENTITY(0, 1)" );

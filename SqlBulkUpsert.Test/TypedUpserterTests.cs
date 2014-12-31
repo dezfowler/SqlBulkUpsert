@@ -13,23 +13,21 @@ namespace SqlBulkUpsert.Test
 			using (var connection = DatabaseHelper.CreateAndOpenConnection())
 			{
 				// Arrange
-				Action<TestDto, int> identUpdater = (d, i) => d.Ident = i;
-
 				var targetSchema = SqlTableSchema.LoadFromDatabase(connection, "TestUpsert", "ident");
 
-				var upserter = new TypedUpserter<TestDto>(
-					targetSchema,
-					new Dictionary<string, Func<TestDto, object>>
-						{
-							{ "ident", d => d.Ident },
-							{ "key_part_1", d => d.KeyPart1 },
-							{ "key_part_2", d => d.KeyPart2 },
-							{ "nullable_text", d => d.Text },
-							{ "nullable_number", d => d.Number },
-							{ "nullable_datetimeoffset", d => d.Date },
-						},
-					identUpdater
-					);
+				var columnMappings = new Dictionary<string, Func<TestDto, object>>
+				                    	{
+				                    		{"ident", d => d.Ident},
+				                    		{"key_part_1", d => d.KeyPart1},
+				                    		{"key_part_2", d => d.KeyPart2},
+				                    		{"nullable_text", d => d.Text},
+				                    		{"nullable_number", d => d.Number},
+				                    		{"nullable_datetimeoffset", d => d.Date},
+				                    	};
+
+				Action<TestDto, int> identUpdater = (d, i) => d.Ident = i;
+            
+				var upserter = new TypedUpserter<TestDto>(targetSchema, columnMappings, identUpdater);
 
 				var items = new List<TestDto>();
 
